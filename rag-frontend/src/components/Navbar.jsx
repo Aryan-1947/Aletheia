@@ -69,7 +69,11 @@ export default function Navbar() {
                   style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #6366f1' }}
                 />
                 <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                  onClick={() => logout({ logoutParams: { returnTo: 'http://localhost:5173/login' } })}
+                  onClick={() => logout({ 
+  logoutParams: { 
+    returnTo: window.location.origin + '/login'
+  } 
+})}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 6,
                     padding: '6px 12px', borderRadius: 8,
