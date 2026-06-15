@@ -1,0 +1,11 @@
+{
+  "doc_id": "sample_20260605123344",
+  "content": "# Python FastAPI Guide\n\n## Installation\nInstall FastAPI using pip: `pip install fastapi uvicorn`\n\n## Creating Your First App\nCreate a file called main.py and add the following code to define routes.\nFastAPI automatically generates OpenAPI documentation at /docs.\n\n## Request Handling\nFastAPI supports path parameters, query parameters, and request bodies.\nUse Pydantic models to validate request data automatically.\n\n## Error Handling\nUse HTTPException to return error responses with status codes.\nFastAPI handles validation errors automatically and returns 422 responses.",
+  "source": "C:\\Users\\ARYAN SHEKHAWAT\\OneDrive\\Desktop\\RAG Pipeline with Hybrid Search\\rag-hybrid-search\\data\\raw\\sample.md",
+  "file_type": "md",
+  "metadata": {
+    "filename": "sample.md",
+    "file_size": 587,
+    "loaded_at": "2026-06-05T12:33:44.896870"
+  }
+}
