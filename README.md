@@ -52,6 +52,7 @@ Tested on a 10-question golden Q&A dataset (recursive chunking / hybrid mode).
 | Frontend | React + Vite + Tailwind |
 | Auth | Auth0 (Google + GitHub OAuth) |
 | Deployment | Railway (backend) + Vercel (frontend) |
+| Chunking | LangChain Text Splitters |
 
 ---
 
