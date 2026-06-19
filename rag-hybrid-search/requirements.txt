@@ -15,7 +15,7 @@ langchain-text-splitters==0.2.2
 
 # Embeddings & Vector Store
 chromadb==0.5.3
-google-generativeai==0.7.2
+sentence-transformers==3.0.1
 
 # Sparse Search
 rank-bm25==0.2.2

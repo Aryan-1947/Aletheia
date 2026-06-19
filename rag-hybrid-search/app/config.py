@@ -17,11 +17,10 @@ for d in [RAW_DIR, PROCESSED_DIR, INDEX_DIR]:
 
 # API Keys
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # Embedding
-EMBEDDING_MODEL = "models/gemini-embedding-001"
-EMBEDDING_DIMENSION = 3072
+LOCAL_EMBEDDING_MODEL = "BAAI/bge-large-en-v1.5"
+EMBEDDING_DIMENSION = 1024
 
 # Chunking
 CHUNK_SIZE = 500
