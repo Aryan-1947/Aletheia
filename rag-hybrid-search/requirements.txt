@@ -1,4 +1,9 @@
-# Updated: v2
+# Updated: v3 — removed unused markdownify, dropped full langchain (only
+# langchain-text-splitters is actually used), and pinned CPU-only torch to
+# avoid pulling ~1.5GB of unused CUDA/GPU libraries on a CPU-only server.
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # Core
 python-dotenv==1.0.0
 pydantic==2.7.1
@@ -6,16 +11,15 @@ pydantic==2.7.1
 # Document Loading
 pypdf==4.2.0
 beautifulsoup4==4.12.3
-markdownify==0.12.1
 lxml==5.2.2
 
-# Chunking
-langchain==0.2.6
+# Chunking (only the text-splitters subpackage is used, not full langchain)
 langchain-text-splitters==0.2.2
 
 # Embeddings & Vector Store
 chromadb==0.5.3
 sentence-transformers==3.0.1
+torch==2.3.1+cpu
 
 # Sparse Search
 rank-bm25==0.2.2
