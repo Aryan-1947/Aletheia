@@ -90,3 +90,31 @@ def get_collection_stats(collection_name: str = None) -> dict:
     client = get_chroma_client()
     collection = get_or_create_collection(client, collection_name)
     return {"total_chunks": collection.count(), "collection": collection_name or CHROMA_COLLECTION}
+
+
+
+def get_platform_stats() -> dict:
+    """Aggregate real stats across every user's collection — used by the
+    Landing page to show genuine platform-wide numbers instead of hardcoded
+    placeholders."""
+    client = get_chroma_client()
+    collections = client.list_collections()
+
+    total_chunks = 0
+    user_collection_count = 0
+    for col in collections:
+        name = col.name if hasattr(col, "name") else col
+        if isinstance(name, str) and name.startswith("rag_"):
+            try:
+                c = client.get_collection(name)
+                count = c.count()
+                if count > 0:
+                    total_chunks += count
+                    user_collection_count += 1
+            except Exception:
+                continue
+
+    return {
+        "total_chunks": total_chunks,
+        "active_users": user_collection_count,
+    }    

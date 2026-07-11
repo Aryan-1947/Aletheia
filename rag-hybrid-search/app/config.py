@@ -19,12 +19,12 @@ for d in [RAW_DIR, PROCESSED_DIR, INDEX_DIR]:
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Embedding
-LOCAL_EMBEDDING_MODEL = "BAAI/bge-large-en-v1.5"
-EMBEDDING_DIMENSION = 1024
+LOCAL_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+EMBEDDING_DIMENSION = 384
 
 # Chunking
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
+CHUNK_SIZE = 1800      # ~450 tokens, safely under 512 limit
+CHUNK_OVERLAP = 150    # good overlap for context continuity
 
 # Retrieval
 TOP_K_DENSE = 10
@@ -39,3 +39,5 @@ MAX_TOKENS = 1024
 
 # ChromaDB
 CHROMA_COLLECTION = "rag_documents"
+
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")

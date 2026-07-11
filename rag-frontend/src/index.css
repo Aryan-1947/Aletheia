@@ -1,27 +1,44 @@
 @import "tailwindcss";
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+@custom-variant dark (&:where(.dark, .dark *));
 
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  min-height: 100vh;
-  transition: background 0.3s;
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  input, button { font-family: inherit; }
+}
+
+/* Root bg so overscroll/rubber-band bounce reveals the correct color
+   instead of the browser's default white — this was the "glitch" on
+   every page, not just Ask/Documents. */
+/* Softer off-white instead of pure #fff — less glare, and gives dots/cards something to contrast against */
+html, body {
+  background-color: #fafafa;
+}
+html.dark, html.dark body {
+  background-color: #09090b;
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
 
-input, button { font-family: inherit; }
-
-
-html, body {
+html {
   overflow-x: hidden;
+}
+body {
   max-width: 100vw;
 }
-
-* {
-  box-sizing: border-box;
+*:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
 }
 
 @media (max-width: 600px) {

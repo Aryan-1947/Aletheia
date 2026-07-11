@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Search, FileText, BarChart2, Zap, Sun, Moon, LogOut, Menu, X } from 'lucide-react'
+import { Search, FileText, BarChart2, Sun, Moon, LogOut, Menu, X } from 'lucide-react'
 import { useTheme } from '../App'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useState } from 'react'
@@ -13,166 +12,128 @@ const links = [
 
 export default function Navbar() {
   const { pathname } = useLocation()
-  const theme = useTheme()
+  const { dark, toggle } = useTheme()
   const { isAuthenticated, user, logout } = useAuth0()
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <>
-      <nav style={{
-        background: theme.navBg, borderBottom: `1px solid ${theme.border}`,
-        backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50,
-        transition: 'all 0.3s',
-      }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+      <nav className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur-md transition-colors duration-150 dark:border-zinc-800 dark:bg-zinc-950/95">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="flex h-14 items-center justify-between">
 
-            {/* Logo */}
-            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }} onClick={() => setMenuOpen(false)}>
-              <div style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: 10, padding: 8, display: 'flex' }}>
-                <Zap size={18} color="white" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 18, color: theme.text }}>
-                RAG<span style={{ color: '#6366f1' }}>Search</span>
+            <Link
+              to="/"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 text-[14px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100"
+            >
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-900 dark:bg-white">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-white dark:fill-zinc-900">
+                  <path d="M12 2 L22 20 L17.5 20 L12 9.5 L6.5 20 L2 20 Z" />
+                </svg>
               </span>
+              Aletheia
             </Link>
 
-            {/* Desktop Nav */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="desktop-nav">
+            <div className="hidden items-center gap-1 sm:flex">
               {links.map(({ to, label, icon: Icon }) => {
                 const active = pathname === to
                 return (
-                  <Link key={to} to={to} style={{ textDecoration: 'none' }}>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '8px 16px', borderRadius: 8,
-                      background: active ? 'rgba(99,102,241,0.15)' : 'transparent',
-                      border: active ? '1px solid rgba(99,102,241,0.3)' : '1px solid transparent',
-                      color: active ? '#818cf8' : theme.textSub,
-                      fontSize: 14, fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s',
-                    }}>
-                      <Icon size={15} />{label}
-                    </motion.div>
+                  <Link
+                    key={to}
+                    to={to}
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-all duration-150 ${
+                      active
+                        ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
+                        : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 dark:hover:bg-zinc-900/60 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    <Icon size={14} />
+                    {label}
                   </Link>
                 )
               })}
 
-              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                onClick={theme.toggle} style={{
-                  marginLeft: 8, padding: 8, borderRadius: 8,
-                  border: `1px solid ${theme.border}`, background: theme.bgCard,
-                  cursor: 'pointer', color: theme.textSub, display: 'flex', alignItems: 'center',
-                }}>
-                {theme.dark ? <Sun size={16} /> : <Moon size={16} />}
-              </motion.button>
+              <button
+                onClick={toggle}
+                className="ml-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition-all duration-150 hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              >
+                {dark ? <Sun size={14} /> : <Moon size={14} />}
+              </button>
 
               {isAuthenticated && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 8 }}>
-                  <img src={user.picture} alt={user.name}
-                    style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #6366f1' }} />
-                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    onClick={() => logout({ logoutParams: { returnTo: window.location.origin + '/login' } })}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '6px 12px', borderRadius: 8,
-                      border: `1px solid ${theme.border}`, background: theme.bgCard,
-                      color: theme.textMuted, cursor: 'pointer', fontSize: 13,
-                    }}>
+                <div className="ml-2 flex items-center gap-2">
+                  <img
+                    src={user.picture}
+                    alt={user.name}
+                    className="h-8 w-8 rounded-full border border-zinc-200 dark:border-zinc-800"
+                  />
+                  <button
+                    onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                    className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-[13px] font-medium text-zinc-600 transition-all duration-150 hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+                  >
                     <LogOut size={14} /> Logout
-                  </motion.button>
+                  </button>
                 </div>
               )}
             </div>
 
-            {/* Mobile Right */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mobile-nav">
-              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                onClick={theme.toggle} style={{
-                  padding: 8, borderRadius: 8,
-                  border: `1px solid ${theme.border}`, background: theme.bgCard,
-                  cursor: 'pointer', color: theme.textSub, display: 'flex', alignItems: 'center',
-                }}>
-                {theme.dark ? <Sun size={16} /> : <Moon size={16} />}
-              </motion.button>
-
-              <motion.button whileTap={{ scale: 0.9 }}
+            <div className="flex items-center gap-2 sm:hidden">
+              <button
+                onClick={toggle}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400"
+              >
+                {dark ? <Sun size={14} /> : <Moon size={14} />}
+              </button>
+              <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                style={{
-                  padding: 8, borderRadius: 8,
-                  border: `1px solid ${theme.border}`, background: theme.bgCard,
-                  cursor: 'pointer', color: theme.textSub, display: 'flex', alignItems: 'center',
-                }}>
-                {menuOpen ? <X size={20} /> : <Menu size={20} />}
-              </motion.button>
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400"
+              >
+                {menuOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
             </div>
 
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu Dropdown */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            style={{
-              position: 'fixed', top: 64, left: 0, right: 0, zIndex: 49,
-              background: theme.navBg, borderBottom: `1px solid ${theme.border}`,
-              backdropFilter: 'blur(12px)', padding: '16px 24px',
-            }}
-          >
-            {links.map(({ to, label, icon: Icon }) => {
-              const active = pathname === to
-              return (
-                <Link key={to} to={to} style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '12px 16px', borderRadius: 10, marginBottom: 4,
-                    background: active ? 'rgba(99,102,241,0.15)' : 'transparent',
-                    color: active ? '#818cf8' : theme.textSub,
-                    fontSize: 15, fontWeight: 500,
-                  }}>
-                    <Icon size={18} />{label}
-                  </div>
-                </Link>
-              )
-            })}
+      {menuOpen && (
+        <div className="fixed left-0 right-0 top-14 z-40 border-b border-zinc-200 bg-white/95 px-6 py-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
+          {links.map(({ to, label, icon: Icon }) => {
+            const active = pathname === to
+            return (
+              <Link
+                key={to}
+                to={to}
+                onClick={() => setMenuOpen(false)}
+                className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium transition-all duration-150 ${
+                  active
+                    ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
+                    : 'text-zinc-500 dark:text-zinc-400'
+                }`}
+              >
+                <Icon size={15} />
+                {label}
+              </Link>
+            )
+          })}
 
-            {isAuthenticated && (
-              <div style={{ borderTop: `1px solid ${theme.border}`, marginTop: 8, paddingTop: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 16px', marginBottom: 8 }}>
-                  <img src={user.picture} alt={user.name}
-                    style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #6366f1' }} />
-                  <span style={{ color: theme.text, fontSize: 14, fontWeight: 500 }}>{user.name}</span>
-                </div>
-                <button
-                  onClick={() => { logout({ logoutParams: { returnTo: window.location.origin + '/login' } }); setMenuOpen(false) }}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    padding: '10px 16px', borderRadius: 10, width: '100%',
-                    border: `1px solid ${theme.border}`, background: theme.bgCard,
-                    color: theme.textMuted, cursor: 'pointer', fontSize: 14,
-                  }}>
-                  <LogOut size={16} /> Logout
-                </button>
+          {isAuthenticated && (
+            <div className="mt-2 border-t border-zinc-200 pt-3 dark:border-zinc-800">
+              <div className="mb-2 flex items-center gap-3 px-3 py-1">
+                <img src={user.picture} alt={user.name} className="h-8 w-8 rounded-full border border-zinc-200 dark:border-zinc-800" />
+                <span className="text-[14px] font-medium text-zinc-900 dark:text-zinc-100">{user.name}</span>
               </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-nav { display: flex !important; }
-        }
-        @media (min-width: 769px) {
-          .desktop-nav { display: flex !important; }
-          .mobile-nav { display: none !important; }
-        }
-      `}</style>
+              <button
+                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                className="flex w-full items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2.5 text-[14px] text-zinc-600 dark:border-zinc-800 dark:text-zinc-400"
+              >
+                <LogOut size={15} /> Logout
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </>
   )
 }

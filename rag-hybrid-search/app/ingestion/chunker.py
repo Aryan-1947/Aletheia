@@ -8,6 +8,14 @@ from rich.console import Console
 from app.ingestion.document_loader import Document
 from app.config import CHUNK_SIZE, CHUNK_OVERLAP
 
+def is_reference_chunk(text: str) -> bool:
+    """Skip chunks that are mostly bibliography/references."""
+    lines = [l.strip() for l in text.strip().split('\n') if l.strip()]
+    if not lines:
+        return False
+    ref_lines = sum(1 for l in lines if l.startswith('[') and ']' in l)
+    return ref_lines / len(lines) > 0.5
+
 console = Console()
 
 
@@ -36,7 +44,7 @@ def fixed_chunk(doc: Document, size: int = CHUNK_SIZE, overlap: int = CHUNK_OVER
         chunk_size=size, chunk_overlap=overlap,
         separators=["\n\n", "\n", ". ", " ", ""]
     )
-    texts = splitter.split_text(doc.content)
+    texts = [t for t in splitter.split_text(doc.content) if not is_reference_chunk(t)]
     return [
         Chunk(content=t, doc_id=doc.doc_id, source=doc.source,
               chunk_index=i, strategy=ChunkStrategy.FIXED,
@@ -50,7 +58,7 @@ def recursive_chunk(doc: Document, size: int = CHUNK_SIZE, overlap: int = CHUNK_
         chunk_size=size, chunk_overlap=overlap,
         separators=["## ", "### ", "\n\n", "\n", ". ", " ", ""]
     )
-    texts = splitter.split_text(doc.content)
+    texts = [t for t in splitter.split_text(doc.content) if not is_reference_chunk(t)]
     return [
         Chunk(content=t, doc_id=doc.doc_id, source=doc.source,
               chunk_index=i, strategy=ChunkStrategy.RECURSIVE,

@@ -45,3 +45,51 @@ Context used: {context}
 
 Reply with ONLY a JSON object like:
 {{"completeness": 8, "groundedness": 9, "reasoning": "one sentence"}}"""
+
+
+
+
+def build_strict_prompt(query: str, chunks: list[dict]) -> str:
+    """Mode 1: Strict — answer ONLY from provided chunks."""
+    context_blocks = ""
+    for i, chunk in enumerate(chunks):
+        source = chunk.get("metadata", {}).get("filename", chunk.get("source", "unknown"))
+        context_blocks += f"\n[{i+1}] Source: {source}\n{chunk['content']}\n"
+
+    return f"""You are a strict document search assistant. Answer the question using ONLY the provided context below.
+
+RULES:
+1. Use ONLY information explicitly stated in the context. 
+2. Cite every claim using bracketed references like [1], [2].
+3. If the context does not contain the answer, say exactly: "I cannot find this in your uploaded documents."
+4. NEVER use outside knowledge. NEVER guess. NEVER infer beyond what is written.
+
+CONTEXT:
+{context_blocks}
+
+QUESTION: {query}
+
+ANSWER (strictly from context only):"""
+
+
+def build_balanced_prompt(query: str, chunks: list[dict]) -> str:
+    """Mode 2: Balanced — use docs as foundation, allow LLM knowledge for explanation."""
+    context_blocks = ""
+    for i, chunk in enumerate(chunks):
+        source = chunk.get("metadata", {}).get("filename", chunk.get("source", "unknown"))
+        context_blocks += f"\n[{i+1}] Source: {source}\n{chunk['content']}\n"
+
+    return f"""You are a helpful assistant. Use the provided document context as your primary source, but you may also use your general knowledge to explain concepts, define terms, or provide helpful context where the documents are unclear or incomplete.
+
+GUIDELINES:
+1. Prioritize information from the provided context.
+2. Cite document-sourced claims using [1], [2] etc.
+3. If you use general knowledge to explain something, prefix it with "Generally speaking," or "In general,".
+4. Be clear about what comes from the document vs your general knowledge.
+
+CONTEXT:
+{context_blocks}
+
+QUESTION: {query}
+
+ANSWER:"""

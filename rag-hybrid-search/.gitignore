@@ -5,3 +5,7 @@ __pycache__/
 data/indexes/
 *.db
 .chroma/
+data/users/
+data/processed/
+data/query_logs/
+data/visitor_count.json

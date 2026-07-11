@@ -1,73 +1,48 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { motion } from 'framer-motion'
-import { Zap } from 'lucide-react'
 import { FaGoogle, FaGithub } from 'react-icons/fa'
 
 export default function Login() {
   const { loginWithRedirect } = useAuth0()
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', background: '#0a0a0f', padding: 24,
-    }}>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid #1e293b',
-          borderRadius: 24, padding: '48px 40px',
-          maxWidth: 420, width: '100%', textAlign: 'center',
-        }}
-      >
-        {/* Logo */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-          <div style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: 16, padding: 16, display: 'inline-flex' }}>
-            <Zap size={32} color="white" />
+    <div className="flex min-h-screen items-center justify-center bg-white px-6 transition-colors duration-150 dark:bg-zinc-950">
+      <div className="w-full max-w-[400px] rounded-xl border border-zinc-200 bg-white/70 p-10 text-center backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/40">
+
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-900 dark:bg-white">
+            <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white dark:fill-zinc-900">
+              <path d="M12 2 L22 20 L17.5 20 L12 9.5 L6.5 20 L2 20 Z" />
+            </svg>
           </div>
         </div>
 
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#f1f5f9', marginBottom: 8 }}>
-          Welcome to RAG<span style={{ color: '#6366f1' }}>Search</span>
+        <h1 className="mb-2 text-[22px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          Welcome to Aletheia
         </h1>
-        <p style={{ color: '#64748b', fontSize: 15, marginBottom: 40, lineHeight: 1.6 }}>
+        <p className="mb-8 text-[14px] leading-relaxed text-zinc-500">
           Sign in to access your personal document space. Your documents are private and only visible to you.
         </p>
 
-        {/* Login Buttons */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <motion.button
-            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+        <div className="flex flex-col gap-2.5">
+          <button
             onClick={() => loginWithRedirect({ authorizationParams: { connection: 'google-oauth2' } })}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-              padding: '14px 24px', borderRadius: 12, border: '1px solid #334155',
-              background: 'rgba(255,255,255,0.05)', color: '#f1f5f9',
-              fontSize: 15, fontWeight: 600, cursor: 'pointer',
-            }}
+            className="flex items-center justify-center gap-2.5 rounded-lg border border-zinc-200 bg-white px-5 py-3 text-[14px] font-medium text-zinc-800 transition-all duration-150 hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            <FaGoogle size={18} color="#ea4335" /> Continue with Google
-          </motion.button>
+            <FaGoogle size={15} /> Continue with Google
+          </button>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+          <button
             onClick={() => loginWithRedirect({ authorizationParams: { connection: 'github' } })}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-              padding: '14px 24px', borderRadius: 12, border: '1px solid #334155',
-              background: 'rgba(255,255,255,0.05)', color: '#f1f5f9',
-              fontSize: 15, fontWeight: 600, cursor: 'pointer',
-            }}
+            className="flex items-center justify-center gap-2.5 rounded-lg border border-zinc-200 bg-white px-5 py-3 text-[14px] font-medium text-zinc-800 transition-all duration-150 hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            <FaGithub size={18} /> Continue with GitHub
-          </motion.button>
+            <FaGithub size={15} /> Continue with GitHub
+          </button>
         </div>
 
-        <p style={{ color: '#334155', fontSize: 12, marginTop: 32, lineHeight: 1.6 }}>
+        <p className="mt-8 text-[12px] leading-relaxed text-zinc-400 dark:text-zinc-600">
           By signing in, your documents are stored privately. No other user can access your files or query your documents.
         </p>
-      </motion.div>
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useState, createContext, useContext } from 'react'
+import { useState, createContext, useContext, useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -8,6 +8,7 @@ import Ask from './pages/Ask'
 import Documents from './pages/Documents'
 import Evaluation from './pages/Evaluation'
 import Login from './pages/Login'
+import DotField from './components/DotField'
 
 export const ThemeContext = createContext()
 export const useTheme = () => useContext(ThemeContext)
@@ -16,8 +17,8 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth0()
 
   if (isLoading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f' }}>
-      <div style={{ color: '#6366f1', fontSize: 18 }}>Loading...</div>
+    <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
+      <div className="text-[14px] font-medium text-zinc-500">Loading...</div>
     </div>
   )
 
@@ -27,37 +28,55 @@ function ProtectedRoute({ children }) {
 export default function App() {
   const [dark, setDark] = useState(true)
 
-  const theme = {
-    dark,
-    toggle: () => setDark(!dark),
-    bg: dark ? '#0a0a0f' : '#f8fafc',
-    bgCard: dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-    border: dark ? '#1e293b' : '#e2e8f0',
-    text: dark ? '#f1f5f9' : '#0f172a',
-    textMuted: dark ? '#64748b' : '#94a3b8',
-    textSub: dark ? '#94a3b8' : '#475569',
-    navBg: dark ? 'rgba(10,10,15,0.8)' : 'rgba(248,250,252,0.8)',
-  }
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark)
+  }, [dark])
+
+  const theme = { dark, toggle: () => setDark(d => !d) }
 
   return (
     <ThemeContext.Provider value={theme}>
       <BrowserRouter>
-        <div style={{ minHeight: '100vh', background: theme.bg, transition: 'background 0.3s' }}>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/*" element={
-              <>
-                <Navbar />
-                <Routes>
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/ask" element={<ProtectedRoute><Ask /></ProtectedRoute>} />
-                  <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
-                  <Route path="/evaluation" element={<Evaluation />} />
-                </Routes>
-                <Footer />
-              </>
-            } />
-          </Routes>
+        <div className="relative min-h-screen bg-zinc-50 text-zinc-900 antialiased transition-colors duration-150 dark:bg-zinc-950 dark:text-zinc-100">
+
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <DotField
+              dotRadius={1.8}
+              dotSpacing={15}
+              cursorRadius={380}
+              cursorForce={0.1}
+              bulgeOnly
+              bulgeStrength={55}
+              sparkle={false}
+              waveAmplitude={0}
+              gradientFrom={dark ? 'rgba(161,161,170,0.55)' : 'rgba(24,24,27,0.55)'}
+              gradientTo={dark ? 'rgba(113,113,122,0.35)' : 'rgba(24,24,27,0.30)'}
+            />
+          </div>
+
+          <div className="relative z-10">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/*" element={
+                // flex column + min-h-screen so Footer always pins to the true
+                // bottom edge instead of leaving dead (dotted) space beneath it
+                // on short-content pages.
+                <div className="flex min-h-screen flex-col">
+                  <Navbar />
+                  <div className="flex-1">
+                    <Routes>
+                      <Route path="/" element={<Landing />} />
+                      <Route path="/ask" element={<ProtectedRoute><Ask /></ProtectedRoute>} />
+                      <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
+                      <Route path="/evaluation" element={<Evaluation />} />
+                    </Routes>
+                  </div>
+                  <Footer />
+                </div>
+              } />
+            </Routes>
+          </div>
+
         </div>
       </BrowserRouter>
     </ThemeContext.Provider>

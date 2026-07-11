@@ -17,6 +17,7 @@ def ask(
     verify: bool = True,
     collection_name: str = None,
     user_id: str = "default",
+    strictness_mode: str = "strict",
 ) -> dict:
     console.print(Panel(f"[bold magenta]❓ Question:[/bold magenta] {query}"))
 
@@ -37,11 +38,11 @@ def ask(
         }
 
     console.print("\n[bold]Generating answer...[/bold]")
-    generation = generate_answer(query, chunks)
+    generation = generate_answer(query, chunks, mode=strictness_mode)
     answer = generation["answer"]
     console.print(f"\n[bold yellow]Answer:[/bold yellow] {answer}\n")
 
-    if verify and generation["citations_found"]:
+    if verify and generation["citations_found"] and strictness_mode == "strict":
         console.print("[bold]Verifying citations...[/bold]")
         verification = verify_citations(answer, chunks)
     else:
@@ -81,3 +82,4 @@ def ask(
         "sources": sources,
         "debug": retrieval["debug"],
     }
+
