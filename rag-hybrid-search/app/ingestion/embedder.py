@@ -7,13 +7,24 @@ from app.ingestion.chunker import Chunk
 
 console = Console()
 
-console.print(f"[dim]Loading local embedding model: {LOCAL_EMBEDDING_MODEL}...[/dim]")
-_model = SentenceTransformer(LOCAL_EMBEDDING_MODEL)
-console.print("[green]✅ Embedding model loaded[/green]")
+# Lazy-loaded singleton — the model is only loaded into memory on first actual
+# use, not at import time. This avoids loading ~130MB+ of model weights during
+# app startup, which can exceed low-memory environments (e.g. Render free tier)
+# and cause the process to be killed before it ever binds to a port.
+_model = None
+
+
+def _get_model():
+    global _model
+    if _model is None:
+        console.print(f"[dim]Loading local embedding model: {LOCAL_EMBEDDING_MODEL}...[/dim]")
+        _model = SentenceTransformer(LOCAL_EMBEDDING_MODEL)
+        console.print("[green]✅ Embedding model loaded[/green]")
+    return _model
 
 
 def embed_text(text: str) -> list[float]:
-    embedding = _model.encode(text, normalize_embeddings=True)
+    embedding = _get_model().encode(text, normalize_embeddings=True)
     return embedding.tolist()
 
 
@@ -24,7 +35,7 @@ def embed_query(query: str) -> list[float]:
 def embed_chunks(chunks: list[Chunk], batch_size: int = 32) -> list[list[float]]:
     console.print(f"\n[bold]Embedding {len(chunks)} chunks locally...[/bold]")
     texts = [c.content for c in chunks]
-    embeddings = _model.encode(
+    embeddings = _get_model().encode(
         texts,
         batch_size=batch_size,
         show_progress_bar=True,
@@ -48,8 +59,6 @@ def is_duplicate(
         if cosine_similarity(new_embedding, existing) > threshold:
             return True
     return False
-
-
 
 
 
