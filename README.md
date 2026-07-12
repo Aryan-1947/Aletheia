@@ -1,41 +1,44 @@
-# 🔍 RAGSearch — Production-grade RAG Pipeline with Hybrid Search
+# Aletheia — Hybrid RAG Search Engine
 
 > Ask anything about your documents. Get grounded answers with verified citations and confidence scores.
 
-**Live Demo:** [ragsearch-fullstack.vercel.app](https://ragsearch-fullstack.vercel.app)
+**Live Demo:** [aletheia-engine.vercel.app](https://aletheia-engine.vercel.app)
 
 ---
 
 ## 🧠 What is this?
 
-RAGSearch lets you upload any document (PDF, Markdown, HTML, TXT) and ask natural language questions about it. Answers are grounded strictly in your documents with inline citations — no hallucinations, no outside knowledge.
+Aletheia lets you upload any document (PDF, Markdown, HTML, TXT) and ask natural language questions about it. Answers are grounded in your documents with inline citations, verified against source chunks, and scored for confidence.
 
-Each user gets their own private document space (Google/GitHub OAuth).
+Each user gets their own private, isolated document space via Google/GitHub OAuth.
 
 ---
 
 ## ✨ Features
 
 - **Hybrid Search** — Dense vector search (ChromaDB) + BM25 sparse search combined via Reciprocal Rank Fusion
-- **Cross-Encoder Reranking** — Top candidates reranked for maximum precision
-- **Citation Verification** — Every claim verified against source chunks using LLM-as-judge
+- **Cross-Encoder Reranking** — Top candidates reranked by an LLM-as-judge for maximum precision
+- **Citation Verification** — Every claim checked against source chunks
 - **Confidence Scoring** — Composite score across retrieval, faithfulness, and completeness
+- **Dual Grounding Modes** — Strict (docs only) or Balanced (docs + general AI knowledge)
+- **Web Search Fallback** — Pull in live web results when your documents come up short
 - **3 Chunking Strategies** — Fixed, Recursive (recommended), Semantic
-- **Per-user Isolation** — Google/GitHub OAuth, each user's docs are private
-- **Dark/Light Mode** — Because we care
+- **Drag-and-Drop Uploads** — With automatic duplicate-file handling
+- **Per-user Isolation** — Google/GitHub OAuth, each user's documents are private
+- **Dark/Light Mode**
 
 ---
 
 ## 📊 Evaluation Results
 
+Tested on a 10-question golden Q&A dataset (recursive chunking / hybrid retrieval mode, local embeddings).
+
 | Metric | Score |
 |---|---|
-| Answer Correctness | 100% |
-| Citation Support Rate | 1.0 |
-| Avg Confidence Score | 0.80 |
-| Avg Faithfulness | 0.567 |
-
-Tested on a 10-question golden Q&A dataset (recursive chunking / hybrid mode).
+| Avg Correctness | 90.0% |
+| Avg Faithfulness | 0.225 |
+| Avg Retrieval Relevance | 0.233 |
+| Avg Confidence | 0.644 |
 
 ---
 
@@ -44,27 +47,25 @@ Tested on a 10-question golden Q&A dataset (recursive chunking / hybrid mode).
 | Layer | Tech |
 |---|---|
 | LLM | Groq LLaMA-3.3-70b |
-| Embeddings | Google Gemini (gemini-embedding-001) |
+| Embeddings | Local (`sentence-transformers`, BAAI/bge-small-en-v1.5) |
 | Vector Store | ChromaDB |
 | Sparse Search | BM25 (rank-bm25) |
 | Reranker | LLM-as-judge (Groq) |
 | Backend | FastAPI + Python 3.11 |
 | Frontend | React + Vite + Tailwind |
 | Auth | Auth0 (Google + GitHub OAuth) |
-| Deployment | Railway (backend) + Vercel (frontend) |
+| Deployment | Render (backend) + Vercel (frontend) |
 | Chunking | LangChain Text Splitters |
 
 ---
 
 ## 🚀 How to Use (Live)
 
-1. Go to [ragsearch-fullstack.vercel.app](https://ragsearch-fullstack.vercel.app)
-2. Login with Google or GitHub
-3. Go to **Documents** → upload your PDF/MD/TXT file
-4. Select **recursive** chunking → click **Run Ingestion**
-5. Go to **Ask** → type your question
-6. Get grounded answers with verified citations 🎉
+1. Go to [aletheia-engine.vercel.app](https://aletheia-engine.vercel.app)
+2. Log in with Google or GitHub
+3. Go to **Documents** → upload a PDF/MD/TXT/HTML file (drag-and-drop supported)
+4. Select a chunking strategy (recursive recommended) → click **Run Ingestion**
+5. Go to **Ask** → type your question, choose Strict or Balanced grounding
+6. Get a grounded answer with verified citations and a confidence score
 
-> ⚠️ **Note:** Use **recursive** chunking. Semantic chunking is rate-limited on Google AI Studio's free tier (gemini-embedding-001 allows 100 req/min — semantic chunking embeds every sentence individually and hits this fast on large docs).
-
----
+> ⚠️ **Note:** The backend runs on Render's free tier, which has limited memory and spins down after inactivity — the first request after a period of idle time may take up to ~50 seconds to respond.
