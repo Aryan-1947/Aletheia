@@ -4,4 +4,9 @@ export const auth0Config = {
   authorizationParams: {
     redirect_uri: window.location.origin,
   },
+  // Persist the session in localStorage instead of only in-memory, so a hard
+  // page refresh restores the logged-in session instantly instead of
+  // triggering a visible re-login prompt while Auth0 silently re-authenticates.
+  cacheLocation: "localstorage",
+  useRefreshTokens: true,
 }
