@@ -88,8 +88,13 @@ def query_vector_store(query_embedding, top_k: int = 10, collection_name: str = 
 
 def get_collection_stats(collection_name: str = None) -> dict:
     client = get_chroma_client()
-    collection = get_or_create_collection(client, collection_name)
-    return {"total_chunks": collection.count(), "collection": collection_name or CHROMA_COLLECTION}
+    try:
+        collection = get_or_create_collection(client, collection_name)
+        return {"total_chunks": collection.count(), "collection": collection_name or CHROMA_COLLECTION}
+    except Exception:
+        # Brand-new user with no collection yet, or a transient Chroma
+        # issue — return a safe empty-state instead of a 500 error.
+        return {"total_chunks": 0, "collection": collection_name or CHROMA_COLLECTION}
 
 
 
