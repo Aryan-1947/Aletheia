@@ -31,6 +31,10 @@ def generate_answer(query: str, chunks: list[dict], mode: str = "strict") -> dic
             temperature=temperature,
         )
         answer = response.choices[0].message.content.strip()
+        # Safety net: normalize any fullwidth-bracket citations the model
+        # reverts to (e.g. 【1】) into the plain [1] format our regex expects,
+        # regardless of how well the prompt's formatting instruction was followed.
+        answer = re.sub(r'【\s*(\d+)\s*】', r'[\1]', answer)
     except Exception as e:
         console.print(f"[red]Generation failed: {e}[/red]")
         return {

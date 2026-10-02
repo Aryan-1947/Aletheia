@@ -19,8 +19,13 @@ for d in [RAW_DIR, PROCESSED_DIR, INDEX_DIR]:
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Embedding
-LOCAL_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+#LOCAL_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+#EMBEDDING_DIMENSION = 384
+
+# Embedding — via Hugging Face Inference API, no local model/torch needed
+LOCAL_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 EMBEDDING_DIMENSION = 384
+HF_API_TOKEN = os.getenv("HF_API_TOKEN")
 
 # Chunking
 CHUNK_SIZE = 1800      # ~450 tokens, safely under 512 limit
@@ -34,7 +39,7 @@ DENSE_WEIGHT = 0.7
 SPARSE_WEIGHT = 0.3
 
 # LLM
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "openai/gpt-oss-120b"
 MAX_TOKENS = 1024
 
 # ChromaDB

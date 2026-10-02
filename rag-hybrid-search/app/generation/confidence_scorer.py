@@ -36,11 +36,12 @@ def score_answer_confidence(
         response = client.chat.completions.create(
             model=GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=100,
+            max_tokens=400,
             temperature=0,
         )
         raw = response.choices[0].message.content.strip()
-        # Strip markdown code fences if present
+        if not raw:
+            raise ValueError("Model returned empty content")
         raw = re.sub(r'```(?:json)?', '', raw).strip().rstrip('`').strip()
         data = json.loads(raw)
         completeness = int(data.get("completeness", 7))

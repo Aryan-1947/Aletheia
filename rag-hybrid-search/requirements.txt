@@ -1,4 +1,4 @@
---extra-index-url https://download.pytorch.org/whl/cpu
+
 
 python-dotenv==1.0.0
 pydantic==2.7.1
@@ -10,8 +10,9 @@ lxml==5.2.2
 langchain-text-splitters==0.2.2
 
 chromadb==0.5.3
-sentence-transformers==3.0.1
-torch==2.3.1+cpu
+# Embeddings — via Hugging Face Inference API, no local model/torch needed
+chromadb==0.5.3
+requests==2.32.3
 
 rank-bm25==0.2.2
 

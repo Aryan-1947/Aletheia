@@ -17,7 +17,7 @@ def rerank_with_llm(query: str, chunks: list[dict], top_k: int = TOP_K_RERANK) -
         return []
 
     # Only rerank top 20 for efficiency
-    candidates = chunks[:20]
+    candidates = chunks[:12]
     console.print(f"  [dim]Reranking {len(candidates)} candidates → keeping top {top_k}...[/dim]")
 
     scored = []
@@ -38,13 +38,18 @@ Score:"""
             response = client.chat.completions.create(
                 model=GROQ_MODEL,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=5,
+                max_tokens=300,
                 temperature=0,
             )
 
             raw = response.choices[0].message.content.strip()
-            score = int(''.join(filter(str.isdigit, raw)) or "1")
-            score = max(1, min(10, score))
+            digits = ''.join(filter(str.isdigit, raw))
+            if not digits:
+                console.print(f"  [yellow]Rerank returned empty/unparseable output, defaulting score 5[/yellow]")
+                score = 5
+            else:
+                score = int(digits)
+                score = max(1, min(10, score))
 
         except Exception as e:
             console.print(f"  [yellow]Rerank failed for chunk, defaulting score 5: {e}[/yellow]")

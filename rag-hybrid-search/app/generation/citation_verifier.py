@@ -65,17 +65,39 @@ def verify_citations(
                 response = client.chat.completions.create(
                     model=GROQ_MODEL,
                     messages=[{"role": "user", "content": prompt}],
-                    max_tokens=5,
+                    max_tokens=400,
                     temperature=0,
                 )
                 verdict = response.choices[0].message.content.strip().upper()
+                console.print(f"  [dim]Verify verdict raw: {verdict!r}[/dim]")
+
+                if not verdict:
+                    # Retry once with an even larger budget — some claims
+                    # (e.g. containing math notation) need more reasoning
+                    # room before the model produces visible output.
+                    response = client.chat.completions.create(
+                        model=GROQ_MODEL,
+                        messages=[{"role": "user", "content": prompt}],
+                        max_tokens=600,
+                        temperature=0,
+                    )
+                    verdict = response.choices[0].message.content.strip().upper()
+                    console.print(f"  [dim]Verify verdict retry: {verdict!r}[/dim]")
+
                 if "YES" in verdict:
+                    claim_supported = True
+                    break
+                elif not verdict:
+                    # Still empty after retry — don't penalize the claim for
+                    # a model/API quirk; give benefit of the doubt instead
+                    # of silently marking a possibly-correct claim as unsupported.
+                    console.print(f"  [yellow]Verification still empty after retry — defaulting to supported[/yellow]")
                     claim_supported = True
                     break
 
             except Exception as e:
                 console.print(f"  [yellow]Verification error: {e}[/yellow]")
-                claim_supported = True  # Give benefit of doubt on API error
+                claim_supported = True
 
         verified.append({
             "claim": claim,

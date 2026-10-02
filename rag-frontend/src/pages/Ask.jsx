@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown'
 import { useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import {
@@ -265,7 +266,9 @@ export default function Ask() {
                 {result.confidence.grade} · {result.confidence.composite}
               </span>
             </div>
-            <p className="text-[14.5px] leading-relaxed text-zinc-800 dark:text-zinc-200">{result.answer}</p>
+            <div className="prose prose-sm max-w-none text-[14.5px] leading-relaxed text-zinc-800 dark:prose-invert dark:text-zinc-200">
+              <ReactMarkdown>{result.answer}</ReactMarkdown>
+            </div>
             {result.strictness_mode === 'balanced' && (
               <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400">
                 Balanced mode — answer may include AI general knowledge beyond your documents.
