@@ -9,7 +9,6 @@ lxml==5.2.2
 
 langchain-text-splitters==0.2.2
 
-chromadb==0.5.3
 # Embeddings — via Hugging Face Inference API, no local model/torch needed
 chromadb==0.5.3
 requests==2.32.3
