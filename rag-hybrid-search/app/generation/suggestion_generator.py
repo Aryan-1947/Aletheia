@@ -32,12 +32,29 @@ Reply ONLY with a JSON array of strings, nothing else. Example format:
         response = client.chat.completions.create(
             model=GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=300,
+            max_tokens=800,
             temperature=0.4,
         )
         raw = response.choices[0].message.content.strip()
+        if not raw:
+            console.print("[yellow]Suggestion generation returned empty content[/yellow]")
+            return []
+
         raw = re.sub(r'```(?:json)?', '', raw).strip().rstrip('`').strip()
-        questions = json.loads(raw)
+
+        # Safety net: if the JSON got cut off mid-array (truncated response),
+        # try to salvage whatever complete question strings exist rather than
+        # discarding the whole batch on one parse error.
+        try:
+            questions = json.loads(raw)
+        except json.JSONDecodeError:
+            matches = re.findall(r'"([^"]{5,200}\?)"', raw)
+            if matches:
+                console.print(f"[yellow]Suggestion JSON was malformed, salvaged {len(matches)} questions from partial output[/yellow]")
+                questions = matches
+            else:
+                raise
+
         return [q for q in questions if isinstance(q, str)][:num_questions]
     except Exception as e:
         console.print(f"[yellow]Suggestion generation failed: {e}[/yellow]")
